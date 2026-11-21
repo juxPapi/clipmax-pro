@@ -2,6 +2,7 @@
 // worth cutting, and every score carries the reasons behind it.
 
 import { energyForRange } from './media.js';
+import { chatForRange } from './chat.js';
 
 const STOPWORDS = new Set(
   `a an the and or but if then than that this these those i you he she it we they me him her us them my your his its our their
@@ -208,6 +209,21 @@ function evaluate(sentences, from, to, duration, language, analysis) {
     }
   }
 
+  const chat = chatForRange(analysis, start, end);
+  if (chat) {
+    if (chat.average >= 0.45) {
+      score += 8;
+      reasons.push({ label: 'Chat was buzzing', points: 8, tone: 'plus' });
+    } else if (chat.average >= 0.2) {
+      score += 4;
+      reasons.push({ label: 'Chat active', points: 4, tone: 'plus' });
+    }
+    if (chat.lift >= 0.3 && chat.peak >= 0.7) {
+      score += 7;
+      reasons.push({ label: 'Chat went crazy here', points: 7, tone: 'plus' });
+    }
+  }
+
   const wordsPerSecond = words.length / seconds;
   if (wordsPerSecond >= 2.3 && wordsPerSecond <= 4.1) {
     score += 9;
@@ -267,6 +283,7 @@ function evaluate(sentences, from, to, duration, language, analysis) {
     hashtags: hashtagsFor(text, language),
     wordsPerSecond: Number(wordsPerSecond.toFixed(2)),
     audio,
+    ...(chat ? { chat } : {}),
   };
 }
 
@@ -348,7 +365,18 @@ export function buildHeatCurve({ words, duration, analysis, binSeconds = 2 }) {
       for (let i = from; i < to; i += 1) sum += analysis.energy[i] || 0;
       e = sum / Math.max(1, to - from);
     }
-    values[bin] = Math.min(1, d * 0.62 + e * 0.38);
+    let c = 0;
+    if (analysis?.chat?.values?.length && analysis.chat.binSeconds) {
+      const from = Math.floor((bin * binSeconds) / analysis.chat.binSeconds);
+      const to = Math.min(analysis.chat.values.length, Math.ceil(((bin + 1) * binSeconds) / analysis.chat.binSeconds));
+      let sum = 0;
+      for (let i = from; i < to; i += 1) sum += analysis.chat.values[i] || 0;
+      c = sum / Math.max(1, to - from);
+    }
+    // When chat data exists, blend it in; otherwise keep the original balance.
+    values[bin] = analysis?.chat?.values?.length
+      ? Math.min(1, d * 0.5 + e * 0.28 + c * 0.22)
+      : Math.min(1, d * 0.62 + e * 0.38);
   }
   // One smoothing pass so the curve reads as a shape, not noise.
   const smoothed = new Float64Array(bins);

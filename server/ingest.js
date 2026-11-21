@@ -31,6 +31,7 @@ export async function downloadUrl(url, { dir, id, onProgress, onLog } = {}) {
     '--newline',
     '--no-part',
     '--write-info-json',
+    '--write-chat',
     '--no-mtime',
     '-f', 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/bv*+ba/b',
     '--merge-output-format', 'mp4',

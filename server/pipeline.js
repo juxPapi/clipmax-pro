@@ -28,6 +28,7 @@ import {
 import { transcribe } from './asr.js';
 import { buildHeatCurve, findClips } from './clips.js';
 import { downloadUrl } from './ingest.js';
+import { findChatFiles, loadChatMessages, buildChatCurve } from './chat.js';
 import { ASPECTS, LANGUAGES, resolveLayout, resolveStyle, toCues } from '../shared/captions.js';
 
 const MAX_CLIP_LIMIT = 16;
@@ -264,6 +265,17 @@ export async function analyzeProject(project, options = {}) {
     setStage(project, job, 'analysis', 36, 'Measuring loudness and speech density…');
     await touch(project);
     const analysis = await analyzeAudio(wav);
+
+    // Optional: chat-replay hype curve (YouTube live chat via yt-dlp --write-chat).
+    if (project.source?.type === 'url') {
+      try {
+        const chatFiles = await findChatFiles(UPLOAD_DIR, project.id);
+        const messages = await loadChatMessages(chatFiles);
+        if (messages.length) analysis.chat = buildChatCurve(messages, project.duration, 2);
+      } catch {
+        /* chat is optional; transcription must continue without it */
+      }
+    }
 
     setStage(project, job, 'transcribe', 42, `Listening with ${model} Whisper… the first run downloads the model once.`);
     await touch(project);
