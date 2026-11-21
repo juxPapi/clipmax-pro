@@ -25,7 +25,7 @@ for (const [file, clipId] of Object.entries(map)) {
   const clip = p.clips.find((c) => c.id === clipId);
   if (!clip) continue;
   const base = file.replace(/\.mp4$/, '');
-  const caption = `${clip.title} — Kai Cenat going crazy in GTA 6 #KAICENAT #GTA6 #KaicenatClips #GTA6Gameplay #Shorts`;
+  const caption = `${clip.title} - Kai Cenat going crazy in GTA 6 #KAICENAT #GTA6 #KaicenatClips #GTA6Gameplay #Shorts`;
   await fs.writeFile(`${DEST}/${base}.txt`, caption, 'utf8');
   const srt = (clip.words || [])
     .map((w, i) => `${i + 1}\n${srtTime(w.start)} --> ${srtTime(w.end)}\n${w.text}\n`)
