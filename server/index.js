@@ -169,7 +169,8 @@ export function createApp({ serveBuild = false } = {}) {
         return res.status(400).json({ error: 'Paste a full http(s) link to a stream, VOD or clip.' });
       }
       const section = req.body?.section ? String(req.body.section).slice(0, 60) : null;
-      const project = await startUrlProject(url, { section });
+      const format = req.body?.format ? String(req.body.format).slice(0, 120) : null;
+      const project = await startUrlProject(url, { section, format });
       res.status(201).json({ project: publicProject(project) });
     } catch (error) {
       next(error);

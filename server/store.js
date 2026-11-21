@@ -25,6 +25,9 @@ export const DEFAULT_SETTINGS = {
     model: 'base',
     language: 'auto',
     wordsPerCue: 4,
+    fps: 60,
+    minClipSeconds: 45,
+    maxClipSeconds: 120,
   },
   brand: {
     handle: '',

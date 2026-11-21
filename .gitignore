@@ -4,6 +4,7 @@ release/
 data/
 vendor/
 reference/
+ref-frames/
 *.mp4
 *.log
 !reference/keep.md

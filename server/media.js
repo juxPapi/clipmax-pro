@@ -251,8 +251,8 @@ export function energyForRange(analysis, start, end) {
   };
 }
 
-function layoutGraph({ layout, width, height, srcW, srcH, frame }) {
-  const plan = composeLayout({ layout, srcW, srcH, width, height, frame });
+function layoutGraph({ layout, width, height, srcW, srcH, frame, facecam }) {
+  const plan = composeLayout({ layout, srcW, srcH, width, height, frame, facecam });
   const crop = (box) => `crop=${box.cropW}:${box.cropH}:${box.x}:${box.y}`;
 
   if (plan.mode === 'blur') {
@@ -262,6 +262,16 @@ function layoutGraph({ layout, width, height, srcW, srcH, frame }) {
       `[bg]${crop(plan.backdrop)},scale=${width}:${height}:flags=bicubic,gblur=sigma=${plan.sigma.toFixed(1)}[bgb]`,
       `[fg]scale=${fg.width}:${fg.height}:flags=lanczos[fgs]`,
       `[bgb][fgs]overlay=${fg.x}:${fg.y}[composed]`,
+    ].join(';');
+  }
+
+  if (plan.mode === 'facecam') {
+    const crop = (box) => `crop=${box.cropW}:${box.cropH}:${box.x}:${box.y}`;
+    return [
+      '[0:v]split=2[face][game]',
+      `[face]${crop(plan.face)},scale=${width}:${plan.topH}:flags=lanczos,setsar=1[faceTop]`,
+      `[game]${crop(plan.game)},scale=${width}:${plan.bottomH}:flags=lanczos,setsar=1[gameBottom]`,
+      '[faceTop][gameBottom]vstack=inputs=2[composed]',
     ].join(';');
   }
 
@@ -297,6 +307,8 @@ export async function renderClip({
   cues = [],
   style,
   layout = 'fill',
+  facecam = {},
+  fps = 60,
   hasAudio = true,
   watermark = null,
   onProgress,
@@ -308,8 +320,8 @@ export async function renderClip({
   await fs.writeFile(path.join(dir, assName), buildAss({ width, height, cues, style, watermark, duration }), 'utf8');
 
   const filter = [
-    layoutGraph({ layout, width, height, srcW, srcH, frame }),
-    `[composed]setsar=1,ass=${assName},fps=30[vout]`,
+    layoutGraph({ layout, width, height, srcW, srcH, frame, facecam }),
+    `[composed]setsar=1,ass=${assName},fps=${fps}[vout]`,
   ].join(';');
 
   await run(

@@ -26,7 +26,7 @@ export async function ytDlpVersion() {
 // 70+ GB 1440p webm. Falls back progressively if unavailable.
 const SAFE_FORMAT = 'b[ext=mp4][height<=480]/bv*[ext=mp4][height<=480]+ba[ext=m4a]/b[height<=480]/bv*[height<=480]+ba/b';
 
-export async function downloadUrl(url, { dir, id, onProgress, onLog, section = null } = {}) {
+export async function downloadUrl(url, { dir, id, onProgress, onLog, section = null, format = null } = {}) {
   await fs.mkdir(dir, { recursive: true });
   const outputTemplate = path.join(dir, `${id}.%(ext)s`);
   const args = [
@@ -41,7 +41,7 @@ export async function downloadUrl(url, { dir, id, onProgress, onLog, section = n
     ...(section
       ? ['--download-sections', section.trim().startsWith('*') ? section.trim() : `*${section.trim()}`, '--force-keyframes-at-cuts']
       : []),
-    '-f', SAFE_FORMAT,
+    '-f', format || SAFE_FORMAT,
     '--merge-output-format', 'mp4',
     '--remux-video', 'mp4',
     '-o', outputTemplate,

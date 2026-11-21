@@ -26,6 +26,7 @@ export const ASPECTS = {
 
 export const LAYOUTS = [
   { id: 'fill', label: 'Fill', hint: 'One full-frame crop' },
+  { id: 'facecam', label: 'Facecam', hint: 'Streamer on top, gameplay below' },
   { id: 'blur', label: 'Blur', hint: 'Blurred backdrop, crisp centre' },
   { id: 'split', label: 'Split', hint: 'Two stacked copies of the frame' },
   { id: 'triple', label: 'Triple', hint: 'Three stacked copies' },

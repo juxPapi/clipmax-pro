@@ -126,6 +126,7 @@ async function runUrlPipeline(project, job, url, options = {}) {
       },
       onLog: (line) => emitEvent('log', { projectId: project.id, line }),
       section: options.section || null,
+      format: options.format || null,
     });
 
     project.filePath = result.file;
@@ -293,6 +294,8 @@ export async function analyzeProject(project, options = {}) {
       language,
       limit: MAX_CLIP_LIMIT,
       analysis,
+      minSeconds: settings.defaults.minClipSeconds || 45,
+      maxSeconds: settings.defaults.maxClipSeconds || 120,
     });
     for (const clip of clips) {
       const words = transcript.words
@@ -355,6 +358,8 @@ export async function renderClipJob(projectId, clipId, options = {}) {
     boxOpacity: options.boxOpacity,
   });
   const layout = resolveLayout(options.layout || settings.defaults.layout);
+  const facecam = options.facecam && typeof options.facecam === 'object' ? options.facecam : {};
+  const fps = Number(options.fps) === 30 ? 30 : 60;
   const start = Math.max(0, Number(options.start ?? clip.start) || 0);
   const end = Math.min(project.duration, Number(options.end ?? clip.end) || clip.end);
   if (end - start < 2) throw new Error('That range is too short to render.');
@@ -404,6 +409,8 @@ export async function renderClipJob(projectId, clipId, options = {}) {
       cues,
       style,
       layout,
+      facecam,
+      fps,
       hasAudio: project.hasAudio,
       watermark,
       onProgress: (pct) => {

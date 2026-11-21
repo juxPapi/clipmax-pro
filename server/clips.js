@@ -222,14 +222,14 @@ function evaluate(sentences, from, to, duration, language, analysis) {
     reasons.push({ label: 'Too fast to follow', points: -6, tone: 'minus' });
   }
 
-  if (seconds >= 18 && seconds <= 42) {
+  if (seconds >= 45 && seconds <= 120) {
     score += 7;
-    reasons.push({ label: 'Length is right on', points: 7, tone: 'plus' });
-  } else if ((seconds >= 13 && seconds < 18) || (seconds > 42 && seconds <= 54)) {
+    reasons.push({ label: 'Length fits a Short', points: 7, tone: 'plus' });
+  } else if (seconds >= 30 && seconds < 45) {
     score += 2;
-  } else if (seconds > 60) {
+  } else if (seconds > 120) {
     score -= 8;
-    reasons.push({ label: 'Longer than a short', points: -8, tone: 'minus' });
+    reasons.push({ label: 'Longer than two minutes', points: -8, tone: 'minus' });
   }
 
   if (/[.!?…]$/.test(text)) score += 3;
@@ -279,11 +279,11 @@ export function scoreRange(allWords, start, end, language = 'auto', analysis = n
   return evaluate(sentences, 0, sentences.length, Math.max(end, 1), language, analysis);
 }
 
-export function findClips({ words, duration, language = 'auto', limit = 10, analysis = null }) {
+export function findClips({ words, duration, language = 'auto', limit = 10, analysis = null, minSeconds = 45, maxSeconds = 120 }) {
   const sentences = buildSentences(words);
   if (!sentences.length) return [];
   const candidates = [];
-  const longest = 58;
+  const longest = Math.max(45, Math.min(120, maxSeconds));
 
   for (let from = 0; from < sentences.length; from += 1) {
     if (sentences[from].start > duration - 8) continue;
@@ -291,7 +291,7 @@ export function findClips({ words, duration, language = 'auto', limit = 10, anal
     while (to < sentences.length && sentences[to].end - sentences[from].start <= longest) to += 1;
     for (let end = from + 1; end <= to; end += 1) {
       const span = sentences[end - 1].end - sentences[from].start;
-      if (span < 13) continue;
+      if (span < minSeconds) continue;
       if (span > longest) break;
       candidates.push({ from, to: end });
     }

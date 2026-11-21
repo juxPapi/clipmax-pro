@@ -475,6 +475,9 @@ export function Studio({ id }) {
   const [aspectId, setAspectId] = useState(() => app.settings?.defaults.aspect || '9:16');
   const [styleId, setStyleId] = useState(() => app.settings?.defaults.captionStyle || app.catalog?.defaultStyle);
   const [layout, setLayout] = useState(() => app.settings?.defaults.layout || 'fill');
+  const [faceX, setFaceX] = useState(0);
+  const [faceY, setFaceY] = useState(0.39);
+  const [faceW, setFaceW] = useState(0.21);
   const [focus, setFocus] = useState(0.5);
   const [focusY, setFocusY] = useState(0.5);
   const [zoom, setZoom] = useState(1);
@@ -597,6 +600,8 @@ export function Studio({ id }) {
         aspect: aspectId,
         styleId,
         layout,
+        facecam: { faceX, faceY, faceW, faceH: faceW },
+        fps: 60,
         focus,
         focusY,
         zoom,
@@ -802,6 +807,26 @@ export function Studio({ id }) {
                   </div>
                 </div>
 
+                {layout === 'facecam' ? (
+                  <div className="facecam-controls">
+                    <label className="slider-row compact">
+                      <span>X</span>
+                      <input type="range" min="0" max="0.8" step="0.01" value={faceX} onChange={(e) => setFaceX(Number(e.target.value))} />
+                      <output>{Math.round(faceX * 100)}</output>
+                    </label>
+                    <label className="slider-row compact">
+                      <span>Y</span>
+                      <input type="range" min="0" max="0.8" step="0.01" value={faceY} onChange={(e) => setFaceY(Number(e.target.value))} />
+                      <output>{Math.round(faceY * 100)}</output>
+                    </label>
+                    <label className="slider-row compact">
+                      <span>Size</span>
+                      <input type="range" min="0.08" max="0.5" step="0.01" value={faceW} onChange={(e) => setFaceW(Number(e.target.value))} />
+                      <output>{Math.round(faceW * 100)}%</output>
+                    </label>
+                  </div>
+                ) : null}
+
                 <label className="slider-row">
                   <span>Horizontal</span>
                   <input
@@ -860,11 +885,11 @@ export function Studio({ id }) {
                     <input
                       type="number"
                       step="0.1"
-                      min={trim.start + 2}
-                      max={project.duration}
+                      min={trim.start + 45}
+                      max={Math.min(project.duration, trim.start + 120)}
                       value={Number(trim.end.toFixed(1))}
                       onChange={(event) => {
-                        const next = clamp(Number(event.target.value), trim.start + 2, project.duration);
+                        const next = clamp(Number(event.target.value), trim.start + 45, Math.min(project.duration, trim.start + 120));
                         setTrim((current) => ({ ...current, end: next }));
                       }}
                     />
