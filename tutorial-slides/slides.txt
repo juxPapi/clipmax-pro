@@ -1,0 +1,13 @@
+file 'C:/Users/Philomena Osei Bonsu/Documents/faceless/tutorial-slides/slide-1.png'
+duration 4
+file 'C:/Users/Philomena Osei Bonsu/Documents/faceless/tutorial-slides/slide-2.png'
+duration 4
+file 'C:/Users/Philomena Osei Bonsu/Documents/faceless/tutorial-slides/slide-3.png'
+duration 4
+file 'C:/Users/Philomena Osei Bonsu/Documents/faceless/tutorial-slides/slide-4.png'
+duration 4
+file 'C:/Users/Philomena Osei Bonsu/Documents/faceless/tutorial-slides/slide-5.png'
+duration 4
+file 'C:/Users/Philomena Osei Bonsu/Documents/faceless/tutorial-slides/slide-6.png'
+duration 4
+file 'C:/Users/Philomena Osei Bonsu/Documents/faceless/tutorial-slides/slide-6.png'
