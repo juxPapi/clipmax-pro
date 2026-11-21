@@ -168,7 +168,8 @@ export function createApp({ serveBuild = false } = {}) {
       if (!isProbablyUrl(url)) {
         return res.status(400).json({ error: 'Paste a full http(s) link to a stream, VOD or clip.' });
       }
-      const project = await startUrlProject(url);
+      const section = req.body?.section ? String(req.body.section).slice(0, 60) : null;
+      const project = await startUrlProject(url, { section });
       res.status(201).json({ project: publicProject(project) });
     } catch (error) {
       next(error);

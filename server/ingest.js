@@ -22,7 +22,11 @@ export async function ytDlpVersion() {
  * Download the best mp4 rendition and return its path plus the metadata sidecar.
  * Progress comes from yt-dlp's `--newline` output.
  */
-export async function downloadUrl(url, { dir, id, onProgress, onLog } = {}) {
+// Prefer a modest progressive MP4 so very long streams don't try to pull a
+// 70+ GB 1440p webm. Falls back progressively if unavailable.
+const SAFE_FORMAT = 'b[ext=mp4][height<=480]/bv*[ext=mp4][height<=480]+ba[ext=m4a]/b[height<=480]/bv*[height<=480]+ba/b';
+
+export async function downloadUrl(url, { dir, id, onProgress, onLog, section = null } = {}) {
   await fs.mkdir(dir, { recursive: true });
   const outputTemplate = path.join(dir, `${id}.%(ext)s`);
   const args = [
@@ -32,14 +36,30 @@ export async function downloadUrl(url, { dir, id, onProgress, onLog } = {}) {
     '--no-part',
     '--write-info-json',
     '--no-mtime',
-    '-f', 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/bv*+ba/b',
+    // For long streams, capture only a section. yt-dlp requires a leading "*"
+    // to mean "from time zero" (e.g. "*0-1800" = first 30 min).
+    ...(section
+      ? ['--download-sections', section.trim().startsWith('*') ? section.trim() : `*${section.trim()}`, '--force-keyframes-at-cuts']
+      : []),
+    '-f', SAFE_FORMAT,
     '--merge-output-format', 'mp4',
     '--remux-video', 'mp4',
     '-o', outputTemplate,
     url,
   ];
 
-  onLog?.('Asking yt-dlp for the best mp4 rendition…');
+  onLog?.('Asking yt-dlp for a moderate mp4 rendition…');
+
+  // Guard against filling the drive on very long streams.
+  try {
+    const stats = await fs.statfs(dir);
+    const freeGB = (stats.bavail * stats.bsize) / 1e9;
+    if (freeGB < 2) {
+      throw new Error(`Only ${freeGB.toFixed(1)} GB free on disk — free up space before downloading.`);
+    }
+  } catch (error) {
+    if (/free on disk/.test(error.message)) throw error;
+  }
 
   await new Promise((resolve, reject) => {
     const child = spawn(YTDLP, args, { windowsHide: true });

@@ -78,7 +78,7 @@ function setStage(project, job, stage, pct, note = '') {
 }
 
 /** Download a link, then run the full analysis on the result. */
-export async function startUrlProject(url) {
+export async function startUrlProject(url, options = {}) {
   const id = newId();
   const now = new Date().toISOString();
   const project = {
@@ -108,11 +108,11 @@ export async function startUrlProject(url) {
   await touch(project);
 
   const job = createJob({ type: 'ingest', projectId: id, label: 'Fetch link' });
-  runUrlPipeline(project, job, url).catch(() => {});
+  runUrlPipeline(project, job, url, options).catch(() => {});
   return project;
 }
 
-async function runUrlPipeline(project, job, url) {
+async function runUrlPipeline(project, job, url, options = {}) {
   try {
     setStage(project, job, 'download', 2, 'yt-dlp is fetching the stream…');
     await touch(project);
@@ -125,6 +125,7 @@ async function runUrlPipeline(project, job, url) {
         emitEvent('project', { project: publicProject(project) });
       },
       onLog: (line) => emitEvent('log', { projectId: project.id, line }),
+      section: options.section || null,
     });
 
     project.filePath = result.file;
