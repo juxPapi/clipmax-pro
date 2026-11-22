@@ -5,6 +5,7 @@ data/
 vendor/
 reference/
 ref-frames/
+tmp-frames/
 *.mp4
 *.log
 !reference/keep.md

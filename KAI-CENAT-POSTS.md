@@ -20,6 +20,25 @@ Rules reminder: caption must mention "Kai Cenat" and use #KAICENAT. Post to TikT
 Deliverables are copied to `C:\Users\Philomena Osei Bonsu\Desktop\Clipmax Pro - Kai Cenat Clips`
 with a matching `.txt` caption and `CAPTIONS.md`.
 
+## 5 Trail Videos (10-minute 1080p60 capture)
+
+A longer 600 s capture was analyzed, yielding 8 candidate moments; the 5 best distinct
+ones were rendered with the same facecam-split 1080p60 configuration:
+
+| # | File | Duration | Title |
+|---|------|----------|-------|
+| 1 | `trail-1-clip-1-4-9x16-mwr1zo0u.mp4` | 80.15s | What do you wanna do? |
+| 2 | `trail-2-clip-4-253-9x16-mwr29imx.mp4` | 115.53s | That's what they just lost. |
+| 3 | `trail-3-clip-8-548-9x16-mwr2nmsn.mp4` | 47.29s | Okay? |
+| 4 | `trail-4-clip-6-397-9x16-mwr2trrp.mp4` | 100.75s | I'm gonna go up here, I can't move! |
+| 5 | `trail-5-clip-2-58-9x16-mwr36p73.mp4` | 104.39s | What about the mud park? |
+
+Location: `C:\Users\Philomena Osei Bonsu\Desktop\Clipmax Pro - Kai Cenat Trails`
+with matching `.txt` captions and `TRAIL-CAPTIONS.md`. All are 1080×1920 at 60 fps and
+within 45s–2min. Reproduce with `scripts/kai-trails-analyze.mjs` and
+`scripts/kai-trails-render-poll.mjs` (the polling script avoids the 5-minute client
+fetch timeout on long renders).
+
 ## Superseded drafts (do NOT submit)
 
 The following earlier renders are below the 45s minimum and lack the facecam split layout:
