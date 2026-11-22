@@ -3,11 +3,13 @@ import { Icon } from './components/Icons.jsx';
 import { navigate, useRoute } from './lib/router.js';
 import { Library } from './views/Library.jsx';
 import { Studio } from './views/Studio.jsx';
+import { SplitScreen } from './views/SplitScreen.jsx';
 import { QueueView } from './views/QueueView.jsx';
 import { SettingsView } from './views/SettingsView.jsx';
 
 const NAV = [
   { id: 'library', label: 'Studio library', icon: 'library' },
+  { id: 'split', label: 'Split screen', icon: 'film' },
   { id: 'queue', label: 'Posting queue', icon: 'queue' },
   { id: 'settings', label: 'Settings', icon: 'settings' },
 ];
@@ -167,9 +169,10 @@ function Shell() {
         <main className="main">
           {view === 'library' ? <Library /> : null}
           {view === 'studio' ? <Studio id={param} /> : null}
+            {view === 'split' ? <SplitScreen /> : null}
           {view === 'queue' ? <QueueView /> : null}
           {view === 'settings' ? <SettingsView /> : null}
-          {!['library', 'studio', 'queue', 'settings'].includes(view) ? <Library /> : null}
+          {!['library', 'studio', 'split', 'queue', 'settings'].includes(view) ? <Library /> : null}
         </main>
       </div>
       <Toasts />

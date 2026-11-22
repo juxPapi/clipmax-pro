@@ -55,6 +55,7 @@ export const api = {
   analyze: (id, options) =>
     request(`/api/projects/${id}/analyze`, { method: 'POST', body: JSON.stringify(options || {}) }),
   render: (id, options) => request(`/api/projects/${id}/render`, { method: 'POST', body: JSON.stringify(options) }),
+  splitRender: (options) => request('/api/split/render', { method: 'POST', body: JSON.stringify(options) }),
   removeProject: (id) => request(`/api/projects/${id}`, { method: 'DELETE' }),
   removeExport: (id, exportId) => request(`/api/projects/${id}/exports/${exportId}`, { method: 'DELETE' }),
 

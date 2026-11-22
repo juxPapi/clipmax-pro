@@ -11,6 +11,34 @@
 }
 
 .facecam-controls .control-group { flex: 1; }
+
+/* Split screen editor */
+.split-screen { display: flex; flex-direction: column; gap: 16px; padding: 12px; }
+.split-topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: space-between; }
+.split-title { margin: 0; font-size: 20px; }
+.split-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.split-thickness, .split-color { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.split-thickness input[type=range] { width: 90px; }
+.split-color input[type=color] { width: 32px; height: 24px; border: none; background: none; cursor: pointer; }
+.split-layout { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 16px; align-items: start; }
+.split-preview-col { display: flex; flex-direction: column; gap: 12px; }
+.split-canvas { position: relative; width: 100%; max-width: 360px; margin: 0 auto; background: var(--maroon-950); border-radius: 12px; overflow: hidden; }
+.split-pane { position: relative; overflow: hidden; cursor: pointer; }
+.split-pane.active { box-shadow: inset 0 0 0 2px var(--signal); }
+.split-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; height: 100%; color: var(--muted); font-size: 12px; }
+.split-divider { width: 100%; cursor: ns-resize; flex-shrink: 0; }
+.split-source-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.split-source { display: flex; flex-direction: column; gap: 4px; }
+.split-source select { width: 100%; }
+.split-upload { cursor: pointer; }
+.split-controls-col { display: flex; flex-direction: column; gap: 12px; }
+.split-pane-controls { border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; background: var(--lit-023); }
+.split-pane-controls.active { border-color: var(--signal); }
+.split-pane-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.split-pane-label { font-weight: 700; font-size: 13px; }
+.split-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.split-trim { display: flex; gap: 8px; }
+.split-result { display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 1px solid var(--line-strong); border-radius: 8px; }
 :root{--ink: #080405;--maroon-950: #0d0609;--maroon-900: #14070d;--maroon-800: #1c0a12;--maroon-700: #2a0e19;--bone: #f5eee3;--bone-dim: #cbbcaf;--muted: #9a887f;--faint: #6f5f58;--signal: #f2c14e;--signal-soft: #ffd98a;--ember: #e4572e;--good: #6fd3a4;--bad: #ff6b57;--line: rgba(245, 238, 227, .09);--line-strong: rgba(245, 238, 227, .17);--panel: linear-gradient(180deg, rgba(40, 15, 24, .72), rgba(18, 8, 12, .86));--radius: 14px;--display: "Anton", "Arial Narrow", "Impact", sans-serif;--body: "Inter Variable", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif  --lit-001: rgba(120,30,48,.34);
   --lit-002: rgba(228,87,46,.1);
   --lit-003: #12070c;

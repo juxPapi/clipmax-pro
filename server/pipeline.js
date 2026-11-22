@@ -24,6 +24,7 @@ import {
   makeThumb,
   probe,
   renderClip,
+  renderSplitPane,
 } from './media.js';
 import { transcribe } from './asr.js';
 import { buildHeatCurve, findClips } from './clips.js';
@@ -448,6 +449,122 @@ export async function renderClipJob(projectId, clipId, options = {}) {
     failJob(job.id, error);
     project.progress = { stage: 'ready', pct: 100, note: 'Render failed' };
     await touch(project);
+    throw error;
+  }
+}
+
+export async function renderSplitPaneJob({
+  topProjectId,
+  bottomProjectId,
+  ratio = 0.5,
+  top = {},
+  bottom = {},
+  fps = 60,
+  hasAudio = true,
+}) {
+  const topProject = await getProject(topProjectId);
+  const bottomProject = await getProject(bottomProjectId);
+  if (!topProject?.filePath) throw new Error('Top video project not found.');
+  if (!bottomProject?.filePath) throw new Error('Bottom video project not found.');
+
+  const aspect = ASPECTS['9:16'];
+  const width = aspect.width;
+  const height = aspect.height;
+
+  const topStart = Math.max(0, Number(top.start ?? 0) || 0);
+  const topEnd = Math.min(topProject.duration, Number(top.end ?? topProject.duration) || topProject.duration);
+  const bottomStart = Math.max(0, Number(bottom.start ?? 0) || 0);
+  const bottomEnd = Math.min(bottomProject.duration, Number(bottom.end ?? bottomProject.duration) || bottomProject.duration);
+  if (topEnd - topStart < 0.4) throw new Error('Top range is too short.');
+  if (bottomEnd - bottomStart < 0.4) throw new Error('Bottom range is too short.');
+
+  const topFrame = {
+    focus: Number(top.focus ?? 0.5),
+    focusY: Number(top.focusY ?? 0.5),
+    zoom: Number(top.zoom ?? 1),
+  };
+  const bottomFrame = {
+    focus: Number(bottom.focus ?? 0.5),
+    focusY: Number(bottom.focusY ?? 0.5),
+    zoom: Number(bottom.zoom ?? 1),
+  };
+
+  const settings = await getSettings();
+  const styleId = settings.defaults.captionStyle;
+  const style = resolveStyle(styleId, { wordsPerCue: settings.defaults.wordsPerCue });
+  const watermark = settings.brand?.watermark && settings.brand?.handle ? String(settings.brand.handle).slice(0, 60) : null;
+
+  const job = createJob({ type: 'render', projectId: topProjectId, label: 'Render split screen' });
+  const slug = 'split';
+  const fileName = `${slug}-${aspect.id.replace(':', 'x')}-${Date.now().toString(36)}.mp4`;
+  const outDir = path.join(EXPORT_DIR, topProjectId);
+  const output = path.join(outDir, fileName);
+
+  try {
+    setStage(topProject, job, 'render', 1, `Rendering ${width}×${height} split screen…`);
+    await touch(topProject);
+    const result = await renderSplitPane({
+      topInput: topProject.filePath,
+      bottomInput: bottomProject.filePath,
+      output,
+      topStart,
+      topEnd,
+      bottomStart,
+      bottomEnd,
+      width,
+      height,
+      topSrcW: topProject.width,
+      topSrcH: topProject.height,
+      bottomSrcW: bottomProject.width,
+      bottomSrcH: bottomProject.height,
+      topFrame,
+      bottomFrame,
+      ratio: Math.max(0.2, Math.min(0.8, Number(ratio) || 0.5)),
+      topMuted: Boolean(top.muted),
+      bottomMuted: Boolean(bottom.muted),
+      topVolume: Number(top.volume ?? 1),
+      bottomVolume: Number(bottom.volume ?? 1),
+      fps: Number(fps) === 30 ? 30 : 60,
+      cues: [],
+      style,
+      watermark,
+      hasAudio,
+      onProgress: (pct) => {
+        topProject.progress = { stage: 'render', pct: Math.round(pct), note: '' };
+        progress(job.id, 'render', pct, '');
+        emitEvent('project', { project: publicProject(topProject) });
+      },
+    });
+
+    const exportRecord = {
+      id: `e_${Date.now().toString(36)}`,
+      file: fileName,
+      clipId: null,
+      title: 'Split screen',
+      aspect: aspect.id,
+      layout: 'splitpane',
+      styleId: style.id,
+      styleName: style.name,
+      width,
+      height,
+      start: 0,
+      end: Number(duration.toFixed(2)),
+      duration: Number(duration.toFixed(2)),
+      size: result.size,
+      createdAt: new Date().toISOString(),
+      url: `/api/media/exports/${topProjectId}/${encodeURIComponent(fileName)}`,
+      publicPath: `/api/public/exports/${topProjectId}/${encodeURIComponent(fileName)}`,
+      split: { topProjectId, bottomProjectId, ratio },
+    };
+    topProject.exports = [exportRecord, ...(topProject.exports || [])];
+    topProject.progress = { stage: 'ready', pct: 100, note: 'Export finished' };
+    await touch(topProject);
+    finishJob(job.id, { exportId: exportRecord.id, file: fileName });
+    return { export: exportRecord, jobId: job.id };
+  } catch (error) {
+    failJob(job.id, error);
+    topProject.progress = { stage: 'ready', pct: 100, note: 'Render failed' };
+    await touch(topProject);
     throw error;
   }
 }

@@ -32,6 +32,7 @@ import {
   startUrlProject,
   reanalyzeProject,
   renderClipJob,
+  renderSplitPaneJob,
   deleteExport,
   recoverStaleProjects,
 } from './pipeline.js';
@@ -217,6 +218,25 @@ export function createApp({ serveBuild = false } = {}) {
   app.post('/api/projects/:id/render', async (req, res, next) => {
     try {
       const result = await renderClipJob(req.params.id, String(req.body?.clipId || ''), req.body || {});
+      res.status(201).json(result);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post('/api/split/render', async (req, res, next) => {
+    try {
+      const topProjectId = String(req.body?.topProjectId || '');
+      const bottomProjectId = String(req.body?.bottomProjectId || '');
+      const result = await renderSplitPaneJob({
+        topProjectId,
+        bottomProjectId,
+        ratio: req.body?.ratio,
+        top: req.body?.top || {},
+        bottom: req.body?.bottom || {},
+        fps: req.body?.fps,
+        hasAudio: req.body?.hasAudio !== false,
+      });
       res.status(201).json(result);
     } catch (error) {
       next(error);

@@ -6,7 +6,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { buildAss } from '../shared/captions.js';
-import { composeLayout } from '../shared/framing.js';
+import { composeLayout, frameBox } from '../shared/framing.js';
 import { findExecutable } from './binaries.js';
 
 const FFMPEG_PACKAGES = ['Gyan.FFmpeg', 'yt-dlp.FFmpeg'];
@@ -336,6 +336,87 @@ export async function renderClip({
       ...(hasAudio
         ? ['-map', '0:a?', '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000']
         : ['-an']),
+      '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p',
+      '-movflags', '+faststart',
+      '-progress', 'pipe:1', '-nostats',
+      output,
+    ],
+    { cwd: dir, onStdout: makeProgressReader(duration, onProgress) }
+  );
+
+  const stats = await fs.stat(output);
+  return { path: output, size: stats.size, duration };
+}
+
+/**
+ * Render a 9:16 split-screen video with two independent sources stacked.
+ * `topInput`/`bottomInput` are file paths; framing per pane via topFrame/bottomFrame.
+ */
+export async function renderSplitPane({
+  topInput,
+  bottomInput,
+  output,
+  topStart = 0,
+  topEnd,
+  bottomStart = 0,
+  bottomEnd,
+  width = 1080,
+  height = 1920,
+  topSrcW = 1920,
+  topSrcH = 1080,
+  bottomSrcW = 1920,
+  bottomSrcH = 1080,
+  topFrame = {},
+  bottomFrame = {},
+  ratio = 0.5,
+  topMuted = false,
+  bottomMuted = false,
+  topVolume = 1,
+  bottomVolume = 1,
+  fps = 60,
+  cues = [],
+  style,
+  watermark = null,
+  hasAudio = true,
+  onProgress,
+}) {
+  const dir = path.dirname(output);
+  await fs.mkdir(dir, { recursive: true });
+  const topDur = Math.max(0.4, topEnd - topStart);
+  const bottomDur = Math.max(0.4, bottomEnd - bottomStart);
+  const duration = Math.max(topDur, bottomDur);
+  const topH = Math.max(4, Math.round(height * ratio / 2) * 2);
+  const bottomH = height - topH;
+  const assName = `cap-${path.basename(output, '.mp4')}.ass`;
+  await fs.writeFile(path.join(dir, assName), buildAss({ width, height, cues, style, watermark, duration }), 'utf8');
+
+  const topBox = frameBox(topSrcW, topSrcH, width, topH, topFrame);
+  const bottomBox = frameBox(bottomSrcW, bottomSrcH, width, bottomH, bottomFrame);
+  const crop = (box) => `crop=${box.cropW}:${box.cropH}:${box.x}:${box.y}`;
+
+  const filter = [
+    `[0:v]${crop(topBox)},scale=${width}:${topH}:flags=lanczos[topv]`,
+    `[1:v]${crop(bottomBox)},scale=${width}:${bottomH}:flags=lanczos[botv]`,
+    '[topv][botv]vstack=inputs=2[composed]',
+    `[composed]setsar=1,ass=${assName},fps=${fps}[vout]`,
+  ].join(';');
+
+  const tv = topMuted ? 0 : Math.max(0, Math.min(2, Number(topVolume) || 1));
+  const bv = bottomMuted ? 0 : Math.max(0, Math.min(2, Number(bottomVolume) || 1));
+
+  const audioFilter = hasAudio
+    ? `[0:a]volume=${tv},aresample=48000[a0];[1:a]volume=${bv},aresample=48000[a1];[a0][a1]amix=inputs=2:duration=longest:dropout_transition=0,loudnorm=I=-16:TP=-1.5:LRA=11[aout]`
+    : null;
+
+  await run(
+    FFMPEG,
+    [
+      '-hide_banner', '-y',
+      '-ss', String(topStart), '-t', String(topDur), '-i', topInput,
+      '-ss', String(bottomStart), '-t', String(bottomDur), '-i', bottomInput,
+      '-filter_complex', audioFilter ? `${filter};${audioFilter}` : filter,
+      '-map', '[vout]',
+      ...(hasAudio ? ['-map', '[aout]', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000'] : ['-an']),
       '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p',
       '-movflags', '+faststart',
       '-progress', 'pipe:1', '-nostats',
