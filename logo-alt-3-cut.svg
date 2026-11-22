@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Clipmax Pro cut logo">
+  <defs>
+    <linearGradient id="a3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c0a12"/>
+      <stop offset="1" stop-color="#0d0609"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#a3)"/>
+  <rect x="28" y="28" width="456" height="456" rx="86" fill="none" stroke="#f2c14e" stroke-opacity=".3" stroke-width="3"/>
+
+  <!-- Two scissor blades forming an X -->
+  <path d="M 168 128 L 344 284" stroke="#f2c14e" stroke-width="34" stroke-linecap="round"/>
+  <path d="M 344 128 L 168 284" stroke="#f2c14e" stroke-width="34" stroke-linecap="round"/>
+  <!-- Blade pivots -->
+  <circle cx="164" cy="124" r="20" fill="#14070d" stroke="#f2c14e" stroke-width="8"/>
+  <circle cx="348" cy="124" r="20" fill="#14070d" stroke="#f2c14e" stroke-width="8"/>
+  <!-- Center play button -->
+  <circle cx="256" cy="206" r="50" fill="#f5eee3"/>
+  <path d="M 246 182 L 246 230 L 282 206 Z" fill="#14070d"/>
+
+  <text x="256" y="392" text-anchor="middle"
+        font-family="Anton, Impact, 'Arial Narrow', sans-serif"
+        font-size="72" font-weight="900" letter-spacing="1" fill="#f5eee3">CLIPMAX</text>
+  <rect x="196" y="418" width="120" height="44" rx="22" fill="#f2c14e"/>
+  <text x="256" y="449" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif"
+        font-size="24" font-weight="800" letter-spacing="3" fill="#14070d">PRO</text>
+</svg>

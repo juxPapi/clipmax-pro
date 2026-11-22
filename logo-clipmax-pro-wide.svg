@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-label="Clipmax Pro wordmark">
+  <!-- Mark -->
+  <path d="M 196 104 A 92 92 0 1 0 196 248"
+        fill="none" stroke="#f2c14e" stroke-width="36" stroke-linecap="round"/>
+  <path d="M 130 138 L 130 214 L 190 176 Z" fill="#f5eee3"/>
+  <rect x="82" y="98" width="20" height="24" rx="4" fill="#14070d"/>
+  <rect x="82" y="230" width="20" height="24" rx="4" fill="#14070d"/>
+
+  <!-- Wordmark -->
+  <text x="300" y="212"
+        font-family="Anton, Impact, 'Arial Narrow', sans-serif"
+        font-size="150" font-weight="900" letter-spacing="2" fill="#f5eee3">CLIPMAX</text>
+
+  <!-- PRO pill -->
+  <rect x="1010" y="112" width="150" height="64" rx="32" fill="#f2c14e"/>
+  <text x="1085" y="158" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif"
+        font-size="34" font-weight="800" letter-spacing="4" fill="#14070d">PRO</text>
+</svg>

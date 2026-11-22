@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Clipmax Pro bolt logo">
+  <defs>
+    <linearGradient id="a1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c0a12"/>
+      <stop offset="1" stop-color="#0d0609"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#a1)"/>
+  <rect x="28" y="28" width="456" height="456" rx="86" fill="none" stroke="#f2c14e" stroke-opacity=".3" stroke-width="3"/>
+
+  <!-- Angular C -->
+  <path d="M 336 122 L 252 122 L 200 178 L 200 246 L 252 302 L 336 302"
+        fill="none" stroke="#f2c14e" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Lightning cut -->
+  <path d="M 288 134 L 222 226 L 262 226 L 240 292 L 312 190 L 270 190 Z" fill="#f5eee3"/>
+
+  <text x="256" y="392" text-anchor="middle"
+        font-family="Anton, Impact, 'Arial Narrow', sans-serif"
+        font-size="72" font-weight="900" letter-spacing="1" fill="#f5eee3">CLIPMAX</text>
+  <rect x="196" y="418" width="120" height="44" rx="22" fill="#f2c14e"/>
+  <text x="256" y="449" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif"
+        font-size="24" font-weight="800" letter-spacing="3" fill="#14070d">PRO</text>
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Clipmax Pro logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c0a12"/>
+      <stop offset="1" stop-color="#0d0609"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Badge -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#bg)"/>
+  <rect x="28" y="28" width="456" height="456" rx="86" fill="none" stroke="#f2c14e" stroke-opacity=".35" stroke-width="3"/>
+
+  <!-- C / clip mark -->
+  <path d="M 322 128 A 104 104 0 1 0 322 280"
+        fill="none" stroke="#f2c14e" stroke-width="36" stroke-linecap="round"/>
+  <!-- Play button cut into the C -->
+  <path d="M 250 164 L 250 244 L 314 204 Z" fill="#f5eee3"/>
+  <!-- Clip notches -->
+  <rect x="196" y="120" width="22" height="26" rx="4" fill="#14070d"/>
+  <rect x="196" y="262" width="22" height="26" rx="4" fill="#14070d"/>
+
+  <!-- Wordmark -->
+  <text x="256" y="394" text-anchor="middle"
+        font-family="Anton, Impact, 'Arial Narrow', sans-serif"
+        font-size="72" font-weight="900" letter-spacing="1" fill="#f5eee3">CLIPMAX</text>
+
+  <!-- PRO pill -->
+  <rect x="196" y="420" width="120" height="44" rx="22" fill="#f2c14e"/>
+  <text x="256" y="451" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif"
+        font-size="24" font-weight="800" letter-spacing="3" fill="#14070d">PRO</text>
+</svg>
