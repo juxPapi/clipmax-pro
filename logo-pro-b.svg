@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Clipmax Pro clapper logo">
+  <defs>
+    <linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c0a12"/>
+      <stop offset="1" stop-color="#0d0609"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#b)"/>
+  <rect x="30" y="30" width="452" height="452" rx="100" fill="none" stroke="#f2c14e" stroke-opacity=".28" stroke-width="3"/>
+
+  <!-- Clapper top -->
+  <rect x="140" y="102" width="232" height="48" rx="14" fill="#f2c14e"/>
+  <g fill="#14070d">
+    <path d="M 154 102 L 180 102 L 166 150 L 140 150 Z"/>
+    <path d="M 210 102 L 236 102 L 222 150 L 196 150 Z"/>
+    <path d="M 266 102 L 292 102 L 278 150 L 252 150 Z"/>
+    <path d="M 322 102 L 348 102 L 334 150 L 308 150 Z"/>
+  </g>
+
+  <!-- Screen -->
+  <rect x="140" y="150" width="232" height="158" rx="20" fill="none" stroke="#f2c14e" stroke-width="28"/>
+  <!-- Play -->
+  <path d="M 226 188 L 226 270 L 304 229 Z" fill="#f5eee3"/>
+
+  <text x="256" y="392" text-anchor="middle"
+        font-family="Anton, Impact, 'Arial Narrow', sans-serif"
+        font-size="74" font-weight="900" letter-spacing="1" fill="#f5eee3">CLIPMAX</text>
+  <rect x="194" y="416" width="124" height="44" rx="22" fill="#f2c14e"/>
+  <text x="256" y="447" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif"
+        font-size="24" font-weight="800" letter-spacing="3" fill="#14070d">PRO</text>
+</svg>
